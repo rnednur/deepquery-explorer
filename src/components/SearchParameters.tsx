@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent } from "@/components/ui/card";
 import { InfoIcon } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import {
   Tooltip,
   TooltipContent,
@@ -14,15 +15,23 @@ import {
 interface SearchParametersProps {
   onModeChange: (mode: "hybrid" | "llm") => void;
   onDepthChange: (depth: number) => void;
+  onBreadthChange: (breadth: number) => void;
+  onCustomLLMChange: (enabled: boolean) => void;
   mode: "hybrid" | "llm";
   depth: number;
+  breadth: number;
+  customLLM: boolean;
 }
 
 export const SearchParameters = ({
   onModeChange,
   onDepthChange,
+  onBreadthChange,
+  onCustomLLMChange,
   mode,
   depth,
+  breadth,
+  customLLM,
 }: SearchParametersProps) => {
   return (
     <Card className="w-full mt-4 animate-fadeIn glass-morphism">
@@ -59,16 +68,39 @@ export const SearchParameters = ({
         
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label>Research Depth</Label>
+            <Label>Research Breadth (2-10)</Label>
+            <span className="text-sm text-muted-foreground">{breadth}</span>
+          </div>
+          <Slider
+            defaultValue={[breadth]}
+            max={10}
+            min={2}
+            step={1}
+            onValueChange={([value]) => onBreadthChange(value)}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label>Research Depth (1-5)</Label>
             <span className="text-sm text-muted-foreground">{depth}</span>
           </div>
           <Slider
             defaultValue={[depth]}
-            max={10}
+            max={5}
             min={1}
             step={1}
             onValueChange={([value]) => onDepthChange(value)}
           />
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="custom-llm"
+            checked={customLLM}
+            onCheckedChange={onCustomLLMChange}
+          />
+          <Label htmlFor="custom-llm">Use custom LLM configuration</Label>
         </div>
       </CardContent>
     </Card>

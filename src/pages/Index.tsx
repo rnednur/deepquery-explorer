@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { SearchInput } from "@/components/SearchInput";
 import { SearchParameters } from "@/components/SearchParameters";
@@ -7,6 +6,7 @@ import { Header } from "@/components/Header";
 import { TaskHistory } from "@/components/TaskHistory";
 import { Button } from "@/components/ui/button";
 import { History } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 const mockResults = [
   {
@@ -34,12 +34,26 @@ const mockResults = [
 const Index = () => {
   const [searchResults, setSearchResults] = useState(mockResults);
   const [searchMode, setSearchMode] = useState<"hybrid" | "llm">("hybrid");
-  const [researchDepth, setResearchDepth] = useState(5);
+  const [researchDepth, setResearchDepth] = useState(2);
+  const [researchBreadth, setResearchBreadth] = useState(4);
+  const [customLLM, setCustomLLM] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [followUpQuestions, setFollowUpQuestions] = useState<string[]>([]);
+  const [currentQuestion, setCurrentQuestion] = useState<number | null>(null);
 
   const handleSearch = (query: string) => {
-    // In a real implementation, this would make an API call
-    console.log("Searching for:", query, "Mode:", searchMode, "Depth:", researchDepth);
+    setFollowUpQuestions([
+      "Can you provide more details about the specific use case?",
+      "What metrics are most important for your evaluation?",
+      "Are there any specific constraints or requirements?",
+    ]);
+    setCurrentQuestion(0);
+    console.log("Searching for:", query, {
+      mode: searchMode,
+      depth: researchDepth,
+      breadth: researchBreadth,
+      customLLM,
+    });
   };
 
   return (
@@ -69,10 +83,42 @@ const Index = () => {
           <SearchParameters
             mode={searchMode}
             depth={researchDepth}
+            breadth={researchBreadth}
+            customLLM={customLLM}
             onModeChange={setSearchMode}
             onDepthChange={setResearchDepth}
+            onBreadthChange={setResearchBreadth}
+            onCustomLLMChange={setCustomLLM}
           />
         </div>
+
+        {currentQuestion !== null && (
+          <Card className="mb-8 animate-fadeIn">
+            <CardContent className="p-6">
+              <h3 className="text-lg font-semibold mb-4">Follow-up Question {currentQuestion + 1}/{followUpQuestions.length}</h3>
+              <p className="text-muted-foreground mb-4">{followUpQuestions[currentQuestion]}</p>
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setCurrentQuestion(null)}
+                >
+                  Skip
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (currentQuestion < followUpQuestions.length - 1) {
+                      setCurrentQuestion(currentQuestion + 1);
+                    } else {
+                      setCurrentQuestion(null);
+                    }
+                  }}
+                >
+                  {currentQuestion < followUpQuestions.length - 1 ? "Next" : "Finish"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {searchResults.length > 0 && (
           <ResultsTabs results={searchResults} />
