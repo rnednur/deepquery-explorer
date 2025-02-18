@@ -1,5 +1,5 @@
 
-import { MoonIcon, SunIcon } from "lucide-react";
+import { MoonIcon, SunIcon, BookOpenCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 
@@ -9,7 +9,8 @@ export const Header = () => {
   return (
     <header className="w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2">
+          <BookOpenCheck className="h-6 w-6 text-primary" />
           <h2 className="text-lg font-display font-semibold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
             DeepResearch
           </h2>
