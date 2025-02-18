@@ -4,6 +4,9 @@ import { SearchInput } from "@/components/SearchInput";
 import { SearchParameters } from "@/components/SearchParameters";
 import { ResultsTabs } from "@/components/ResultsTabs";
 import { Header } from "@/components/Header";
+import { TaskHistory } from "@/components/TaskHistory";
+import { Button } from "@/components/ui/button";
+import { History } from "lucide-react";
 
 const mockResults = [
   {
@@ -32,6 +35,7 @@ const Index = () => {
   const [searchResults, setSearchResults] = useState(mockResults);
   const [searchMode, setSearchMode] = useState<"hybrid" | "llm">("hybrid");
   const [researchDepth, setResearchDepth] = useState(5);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   const handleSearch = (query: string) => {
     // In a real implementation, this would make an API call
@@ -44,6 +48,17 @@ const Index = () => {
       
       <main className="container mx-auto px-4 py-12">
         <div className="text-center mb-12 animate-fadeIn">
+          <div className="flex justify-end mb-4">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={() => setIsHistoryOpen(!isHistoryOpen)}
+            >
+              <History className="h-4 w-4" />
+              History
+            </Button>
+          </div>
           <h1 className="text-4xl font-display font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
             Deep Research Tool
           </h1>
@@ -63,6 +78,11 @@ const Index = () => {
           <ResultsTabs results={searchResults} />
         )}
       </main>
+
+      <TaskHistory
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+      />
     </div>
   );
 };
